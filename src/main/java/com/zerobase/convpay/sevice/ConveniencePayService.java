@@ -7,37 +7,42 @@ public class ConveniencePayService {
     private final MoneyAdapter moneyAdapter = new MoneyAdapter();
     private final CardAdapter cardAdapter = new CardAdapter();
     public PayResponse pay(PayRequest payRequest){
-        MoneyUseResult moneyUseResult;
-        CardUseResult cardUseResult;
+        PaymentInterface paymentInterface;
 
-        // 현금결제
-        if(payRequest.getPayMethodType() == PayMethodType.MONEY){
-            moneyUseResult = moneyAdapter.use(payRequest.getPayAmount());
-        }else{// 카드결제
-            cardAdapter.approval();
-            cardAdapter.authorization();
-            cardUseResult = cardAdapter.capture(payRequest.getPayAmount());
+        if(payRequest.getPayMethodType() == PayMethodType.CARD){
+            paymentInterface = cardAdapter;
+        }else{
+            paymentInterface = moneyAdapter;
         }
 
+        // 이렇게 합치면 card인지 money인지 알필요없이 실행됨
+        PaymentResult paymentResult = paymentInterface.payment(payRequest.getPayAmount());
 
-        // fail fast
-        if(moneyUseResult == MoneyUseResult.USE_FAIL || cardUseResult == CardUseResult.USE_FAIL){
+        // 실패
+        if(paymentResult == PaymentResult.PAYMENT_FAIL) {
             return new PayResponse(PayResult.FAIL, 0);
         }
 
-        // only one success case
+        // 성공
         return new PayResponse(PayResult.SUCCESS, payRequest.getPayAmount());
     }
 
     public PayCancelResponse payCancel(PayCancelRequest payCancelRequest){
-        MoneyUseCancelResult moneyUseCancelResult = moneyAdapter.payCancel(payCancelRequest.getPayCancelAmount());
+        PaymentInterface paymentInterface;
 
-        // fail fast
-        if(moneyUseCancelResult == MoneyUseCancelResult.USE_CANCEL_FAIL){
+        if(payCancelRequest.getPayMethodType() == PayMethodType.CARD){
+            paymentInterface = cardAdapter;
+        }else{
+            paymentInterface = moneyAdapter;
+        }
+
+        CancelPaymentResult cancelPaymentResult = paymentInterface.cancelPayment(payCancelRequest.getPayCancelAmount());
+
+        // 실패
+        if(cancelPaymentResult == CancelPaymentResult.CANCEL_PAYMENT_FAIL){
             return new PayCancelResponse(PayCancelResult.PAY_CANCEL_FAIL, 0);
         }
 
-        // success
         return new PayCancelResponse(PayCancelResult.PAY_CANCEL_SUCCESS, payCancelRequest.getPayCancelAmount());
     }
 }

@@ -1,6 +1,7 @@
 package com.zerobase.convpay.dto;
 
 import com.zerobase.convpay.type.ConvenienceType;
+import com.zerobase.convpay.type.PayMethodType;
 
 public class PayRequest {
     // 편의점 종류
@@ -8,6 +9,8 @@ public class PayRequest {
 
     // 결제금액
     Integer payAmount;
+
+    // 결제 타입
     PayMethodType payMethodType;
 
     public PayRequest(ConvenienceType convenienceType, Integer payAmount, PayMethodType payMethodType) {

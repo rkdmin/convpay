@@ -1,9 +1,8 @@
 package com.zerobase.convpay.sevice;
 
-import com.zerobase.convpay.type.CardUseCancelResult;
-import com.zerobase.convpay.type.CardUseResult;
+import com.zerobase.convpay.type.*;
 
-public class CardAdapter {
+public class CardAdapter implements PaymentInterface{
     // 1. 인증
     public void authorization(){
         System.out.println("authorization success");
@@ -31,5 +30,29 @@ public class CardAdapter {
         }
 
         return CardUseCancelResult.USE_CANCEL_SUCCESS;
+    }
+
+    @Override
+    public PaymentResult payment(Integer payAmount) {
+        authorization();
+        approval();
+        CardUseResult cardUseResult = capture(payAmount);
+
+        if(cardUseResult == cardUseResult.USE_FAIL){
+            return PaymentResult.PAYMENT_FAIL;
+        }
+
+        return PaymentResult.PAYMENT_SUCCESS;
+    }
+
+    @Override
+    public CancelPaymentResult cancelPayment(Integer cancelAmount) {
+        CardUseCancelResult cardUseCancelResult = cancelCapture(cancelAmount);
+
+        if(cardUseCancelResult == cardUseCancelResult.USE_CANCEL_FAIL){
+            return CancelPaymentResult.CANCEL_PAYMENT_FAIL;
+        }
+
+        return CancelPaymentResult.CANCEL_PAYMENT_SUCCESS;
     }
 }

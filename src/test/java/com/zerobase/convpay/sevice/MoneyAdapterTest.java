@@ -43,7 +43,7 @@ class MoneyAdapterTest {
         int payAmount = 1000_000;
 
         // when
-        MoneyUseCancelResult moneyUseCancelResult = moneyAdapter.payCancel(payAmount);
+        MoneyUseCancelResult moneyUseCancelResult = moneyAdapter.useCancel(payAmount);
 
         // then
         assertEquals(USE_CANCEL_SUCCESS, moneyUseCancelResult);
@@ -55,7 +55,7 @@ class MoneyAdapterTest {
         int payAmount = 99;
 
         // when
-        MoneyUseCancelResult moneyUseCancelResult = moneyAdapter.payCancel(payAmount);
+        MoneyUseCancelResult moneyUseCancelResult = moneyAdapter.useCancel(payAmount);
 
         // then
         assertEquals(USE_CANCEL_FAIL, moneyUseCancelResult);
