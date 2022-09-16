@@ -6,6 +6,7 @@ import com.zerobase.convpay.type.*;
 public class ConveniencePayService {
     private final MoneyAdapter moneyAdapter = new MoneyAdapter();
     private final CardAdapter cardAdapter = new CardAdapter();
+    private final DiscountInterface discountInterface = new DiscountByPayMethod();// 다형성을 살려 결제방식으로 할인 결정
     public PayResponse pay(PayRequest payRequest){
         PaymentInterface paymentInterface;
 
@@ -15,8 +16,11 @@ public class ConveniencePayService {
             paymentInterface = moneyAdapter;
         }
 
+        // 할인 적용
+        Integer discountedAmount =  discountInterface.getDiscountedAmount(payRequest);
+
         // 이렇게 합치면 card인지 money인지 알필요없이 실행됨
-        PaymentResult paymentResult = paymentInterface.payment(payRequest.getPayAmount());
+        PaymentResult paymentResult = paymentInterface.payment(discountedAmount);
 
         // 실패
         if(paymentResult == PaymentResult.PAYMENT_FAIL) {
@@ -24,7 +28,7 @@ public class ConveniencePayService {
         }
 
         // 성공
-        return new PayResponse(PayResult.SUCCESS, payRequest.getPayAmount());
+        return new PayResponse(PayResult.SUCCESS, discountedAmount);
     }
 
     public PayCancelResponse payCancel(PayCancelRequest payCancelRequest){
