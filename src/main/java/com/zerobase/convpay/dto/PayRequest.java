@@ -8,8 +8,10 @@ public class PayRequest {
 
     // 결제금액
     Integer payAmount;
+    PayMethodType payMethodType;
 
-    public PayRequest(ConvenienceType convenienceType, Integer payAmount) {
+    public PayRequest(ConvenienceType convenienceType, Integer payAmount, PayMethodType payMethodType) {
+        this.payMethodType = payMethodType;
         this.convenienceType = convenienceType;
         this.payAmount = payAmount;
     }
@@ -28,5 +30,13 @@ public class PayRequest {
 
     public void setPayAmount(Integer payAmount) {
         this.payAmount = payAmount;
+    }
+
+    public PayMethodType getPayMethodType() {
+        return payMethodType;
+    }
+
+    public void setPayMethodType(PayMethodType payMethodType) {
+        this.payMethodType = payMethodType;
     }
 }
