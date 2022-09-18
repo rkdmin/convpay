@@ -33,6 +33,11 @@ public class CardAdapter implements PaymentInterface{
     }
 
     @Override
+    public PayMethodType getPayMethodType() {
+        return PayMethodType.CARD;
+    }
+
+    @Override
     public PaymentResult payment(Integer payAmount) {
         authorization();
         approval();
